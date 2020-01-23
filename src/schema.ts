@@ -43,15 +43,16 @@ const rootQuery = new GraphQLObjectType({
     name: 'Query',
     fields: {
         findConversation: {
-            // description: "Looks for conversations in database",
-            // type: userType,
-            // args: {
-            //     username: { type: GraphQLNonNull(GraphQLString) }
-            // },
-            // resolve(r, args) {
-            //     console.log("User info");
-            //     return UserModel.findOne(args).then(e => e)
-            // }
+            description: "Looks for conversations in database",
+            type: conversationType,
+            args: {
+                _id: { type: GraphQLNonNull(GraphQLString) }
+            },
+            async resolve(r, args) {
+                const { _id } = args;
+                const conversation = await ConversationModel.findById(_id);
+                return conversation;
+            }
         }
     }
 });
@@ -60,58 +61,22 @@ const rootMutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
         createNewConversation: {
-            // description: "Adds contact to user",
-            // type: GraphQLBoolean,
-            // args: {
-            //     username: { type: GraphQLNonNull(GraphQLString) },
-            //     contact: { type: GraphQLNonNull(GraphQLString) }
-            // },
-            // resolve(r, args) {
-            //     const { username, contact } = args;
-            //     console.log(`Adding contact "${contact}" to user: ${username}`);
-
-            //     return UserModel.findOne({ username })
-            //         .then((user: any) => {
-            //             return UserModel.findOne({ username: contact })
-            //                 .then((contactUser: any) => {
-            //                     if (!contactUser) {
-            //                         console.log("User doesn't exist");
-            //                         return false;
-            //                     }
-            //                     if (user.contacts.some((addedContact: any) => addedContact.username == contactUser.username)) {
-            //                         console.log('Contact already added')
-            //                         return false;
-            //                     }
-            //                     user.contacts.push(contactUser)
-            //                     user.save();
-            //                     console.log('Contact added successfuly')
-            //                     return true
-
-            //                 })
-            //         });
-            // }
+            description: "Creates a conversation in DB",
+            type: conversationType,
+            resolve() {
+                return new ConversationModel().save()
+            }
         },
         addMessageToConversation: {
-            // description: "Registers user in database",
-            // type: GraphQLBoolean,
-            // args: {
-            //     username: { type: GraphQLNonNull(GraphQLString) },
-            //     userID: { type: GraphQLNonNull(GraphQLString) }
-            // },
-            // resolve(r, args) {
-            //     console.log("Registering user");
-            //     const { username, userID } = args;
-            //     try {
-            //         console.log(args);
-            //         new UserModel({ username, userID }).save()
-            //         return true;
-            //     }
-            //     catch (e) {
-            //         console.log('Error creating user');
-            //         console.log(e);
-            //         return false;
-            //     }
-            // }
+            description: "Adds message to conversation",
+            type: GraphQLBoolean,
+            args: {
+                _id: { type: GraphQLNonNull(GraphQLString) }
+            },
+            resolve(r, args) {
+                const { _id } = args
+                console.log('Add message to conversation', _id)
+            }
         }
     }
 });

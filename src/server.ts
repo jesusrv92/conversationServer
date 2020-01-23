@@ -15,7 +15,7 @@ const server = http.createServer(app);
 
 app.use(express.json());
 
-app.use('/api/chat', graphqlHTTP(req => ({
+app.use('/api/conversations', graphqlHTTP(req => ({
   schema,
   graphiql: true
 })))
