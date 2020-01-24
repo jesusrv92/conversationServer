@@ -3,41 +3,47 @@ import {
     GraphQLObjectType,
     GraphQLList,
     GraphQLString,
-    GraphQLFloat,
     GraphQLBoolean,
-    GraphQLNonNull
+    GraphQLNonNull,
+    GraphQLInt,
 } from 'graphql';
 
 import ConversationModel from './models/conversation';
+import MessageModel from './models/message'
+
+const messageType = new GraphQLObjectType({
+    name: 'message',
+    fields: {
+        sender: {
+            type: GraphQLString
+        },
+        timestamp: {
+            type: GraphQLInt
+        },
+        text: {
+            type: GraphQLString
+        }
+    }
+});
 
 const conversationType = new GraphQLObjectType({
     name: 'Conversation',
     fields: {
-        conversationID: {
+        _id: {
             type: GraphQLString
         },
         title: {
             type: GraphQLString
         },
         dateCreated: {
-            type: GraphQLFloat
+            type: GraphQLInt
         },
-        contacts: {
-            type: new GraphQLList(new GraphQLObjectType({
-                name: 'username',
-                fields: {
-                    username: {
-                        type: GraphQLString
-                    },
-                    userID: {
-                        type: GraphQLString
-                    },
-                }
-            }))
+        messages: {
+            type: new GraphQLList(messageType)
 
         }
     }
-})
+});
 
 const rootQuery = new GraphQLObjectType({
     name: 'Query',
@@ -63,19 +69,34 @@ const rootMutation = new GraphQLObjectType({
         createNewConversation: {
             description: "Creates a conversation in DB",
             type: conversationType,
-            resolve() {
-                return new ConversationModel().save()
+            args: {
+                title: { type: GraphQLString }
+            },
+            resolve(r, args) {
+                const { title } = args;
+                console.log('Creating conversation');
+                return new ConversationModel({ title }).save();
             }
         },
         addMessageToConversation: {
             description: "Adds message to conversation",
             type: GraphQLBoolean,
             args: {
-                _id: { type: GraphQLNonNull(GraphQLString) }
+                _id: { type: GraphQLNonNull(GraphQLString) },
+                sender: { type: GraphQLNonNull(GraphQLString) },
+                text: { type: GraphQLNonNull(GraphQLString) },
             },
             resolve(r, args) {
-                const { _id } = args
-                console.log('Add message to conversation', _id)
+                const { _id, sender, text } = args;
+                return ConversationModel.findById(_id).then((conversation: any) => {
+                    console.log('Add message to conversation', _id);
+                    conversation.messages.push(new MessageModel({ sender, text }));
+                    conversation.save();
+                    return true;
+                }).catch(() => {
+                    console.log("Couldn't add message to conversation", _id);
+                    return false;
+                })
             }
         }
     }
