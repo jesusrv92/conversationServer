@@ -6,6 +6,7 @@ import {
     GraphQLBoolean,
     GraphQLNonNull,
     GraphQLInt,
+    GraphQLFloat,
 } from 'graphql';
 
 import ConversationModel from './models/conversation';
@@ -18,7 +19,7 @@ const messageType = new GraphQLObjectType({
             type: GraphQLString
         },
         timestamp: {
-            type: GraphQLInt
+            type: GraphQLFloat
         },
         text: {
             type: GraphQLString
@@ -36,7 +37,7 @@ const conversationType = new GraphQLObjectType({
             type: GraphQLString
         },
         dateCreated: {
-            type: GraphQLInt
+            type: GraphQLFloat
         },
         messages: {
             type: new GraphQLList(messageType)
@@ -48,8 +49,8 @@ const conversationType = new GraphQLObjectType({
 const rootQuery = new GraphQLObjectType({
     name: 'Query',
     fields: {
-        findConversation: {
-            description: "Looks for conversations in database",
+        findConversationByID: {
+            description: "Looks for conversations in database by ID",
             type: conversationType,
             args: {
                 _id: { type: GraphQLNonNull(GraphQLString) }
@@ -57,6 +58,19 @@ const rootQuery = new GraphQLObjectType({
             async resolve(r, args) {
                 const { _id } = args;
                 const conversation = await ConversationModel.findById(_id);
+                return conversation;
+            }
+        },
+        findConversationByTitle: {
+            description: "Looks for conversations in database by title",
+            type: conversationType,
+            args: {
+                title: { type: GraphQLNonNull(GraphQLString) }
+            },
+            async resolve(r, args) {
+                const { title } = args;
+                if (!title) return null;
+                const conversation = await ConversationModel.findOne({ title });
                 return conversation;
             }
         }
