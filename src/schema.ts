@@ -5,7 +5,6 @@ import {
     GraphQLString,
     GraphQLBoolean,
     GraphQLNonNull,
-    GraphQLInt,
     GraphQLFloat,
 } from 'graphql';
 
