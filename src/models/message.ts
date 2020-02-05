@@ -15,7 +15,7 @@ const MessageModel = conn.model('Message', new conn.Schema({
     },
     timestamp: {
         type: Number,
-        default: new Date()
+        default: Date.now()
     }
 }))
 

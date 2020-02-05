@@ -10,7 +10,7 @@ const ConversationModel = conn.model('Conversation', new conn.Schema({
     },
     dateCreated: {
         type: Number,
-        default: new Date()
+        default: Date.now()
     }
 }))
 
