@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN node run build
+RUN npm run build
 
 EXPOSE 3003
 
