@@ -1,4 +1,5 @@
 import conn from '../db/conversationsDB';
+console.log('Creating message model.');
 
 const MessageModel = conn.model('Message', new conn.Schema({
     sender: {

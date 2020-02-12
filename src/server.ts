@@ -2,12 +2,10 @@ import './config/config';
 
 import schema from './schema'
 
-import ConversationModel from './models/conversation'
-import MessageModel from './models/message'
-
 import http from 'http'
 import express from 'express';
 import graphqlHTTP from 'express-graphql';
+console.log('Creating server.');
 
 const port = process.env.PORT;
 const app = express();

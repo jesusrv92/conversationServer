@@ -10,6 +10,7 @@ import {
 
 import ConversationModel from './models/conversation';
 import MessageModel from './models/message'
+console.log('Creating graphql schema.');
 
 const messageType = new GraphQLObjectType({
     name: 'message',
@@ -56,6 +57,7 @@ const rootQuery = new GraphQLObjectType({
             },
             async resolve(r, args) {
                 const { _id } = args;
+                console.log('Looking for conversation using ID')
                 const conversation = await ConversationModel.findById(_id);
                 return conversation;
             }
@@ -68,7 +70,7 @@ const rootQuery = new GraphQLObjectType({
             },
             async resolve(r, args) {
                 const { title } = args;
-                if (!title) return null;
+                console.log('Looking for conversation using title')
                 const conversation = await ConversationModel.findOne({ title });
                 return conversation;
             }
